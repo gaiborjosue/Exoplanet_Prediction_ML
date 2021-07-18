@@ -1,45 +1,95 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import statistics
-from scipy.stats import spearmanr, kendalltau, pearsonr, boxcox
 from sklearn.tree import DecisionTreeClassifier
 import joblib
+import argparse
+
+parser = argparse.ArgumentParser(description="The Exoplanet Predictor Versión 1.0 - Predict the number of planets of a system based on the stellar characteristics.")
 
 planet_predictor = joblib.load('./exoplanet_predictor.joblib')
 
+parser.add_argument('-t', '--stellareffectivetemp', help='Enter the Stellar Effective Temperature of the Star your analazying.')
+parser.add_argument('-r', '--stellarradius', help='Enter the Stellar Radius [Solar Radius].')
+parser.add_argument('-m', '--stellarmass', help='Enter the Stellar Mass [Solar mass].')
+parser.add_argument('-mt', '--stellarmetallicity', help='Enter the Stellar Metallicity [dex].')
+parser.add_argument('-a', '--stellarage', help='Enter the Stellar Age [Gyr].')
+parser.add_argument('-d', '--stellardensity', help='Enter the Stellar Density [g/cm**3].')
+parser.add_argument('-v', '--stellarradialvelocity', help='Enter the Systemic Radial Velocity [km/s].')
+parser.add_argument('-l', '--stellsurfacegravity', help='Enter the Stellar Surface Gravity [log10(cm/s**2)].')
 
-def Predict_Simple():
-    st_teff_input = input("Enter the value of the Stellar Effective Temperature [K]: ")
-    st_rad_input = input("Enter the value of the Stellar Radius [Solar Radius]: ")
-    st_mass_input = input("Enter the value of the Stellar Mass [Solar mass]: ")
-    st_met_input = input("Enter the value of the Stellar Metallicity [dex]: ")
-    st_age_input = input("Enter the value of the Stellar Age [Gyr]: ")
-    st_dens_input = input("Enter the value of the Stellar Density [g/cm**3]: ")
-    st_radv_input = input("Enter the value of the Systemic Radial Velocity [km/s]: ")
-    predTree = planet_predictor.predict([[st_teff_input, st_rad_input, st_mass_input, st_met_input, st_age_input, st_dens_input, st_radv_input]])
-    return print(predTree)
+parser.add_argument('-data', '--datafile', help='Enter the path of the database file (In CSV format separated by a comma). See an example of a datafile in the "Data" folder of the repository.')
+
+args = parser.parse_args()
+
+print('''
+                      _____                      _                      _    ___  ___ _     
+                      |  ___|                    | |                    | |   |  \/  || |    
+                      | |__  __  __  ___   _ __  | |  __ _  _ __    ___ | |_  | .  . || |    
+                      |  __| \ \/ / / _ \ | '_ \ | | / _` || '_ \  / _ \| __| | |\/| || |    
+                      | |___  >  < | (_) || |_) || || (_| || | | ||  __/| |_  | |  | || |____
+                      \____/ /_/\_\ \___/ | .__/ |_| \__,_||_| |_| \___| \__| \_|  |_/\_____/
+                                          | |                                                
+                                          |_|                                                
+                                          
+
+                       :
+                       :
+                       :
+                       :
+        .              :
+         '.            :           .'
+           '.          :         .'
+             '.   .-""""""-.   .'                                   .'':
+               '."          ".'                               .-""""-.'         .---.          .----.        .-"""-.
+                :            :                _    _        ."     .' ".    ..."     "...    ."      ".    ."       ".
+        .........            .........    o  (_)  (_)  ()   :    .'    :   '..:.......:..'   :        :    :         :   o
+                :            :                              :  .'      :       '.....'       '.      .'    '.       .'
+                 :          :                             .'.'.      .'                        `''''`        `'''''`
+                  '........'                              ''   ``````
+                 .'    :   '.
+               .'      :     '.
+             .'        :       '.
+           .'          :         '.
+              Edward   :                        Exoplanet Machine Learning Predictor
+                       :                        
+                       :
+                       :
+
+
+''')
+
+pred_args = []
+
+simple_args = ['stellareffectivetemp', 'stellarradius', 'stellarmass', 'stellarmetallicity', 'stellarage', 'stellardensity', 'stellarradialvelocity', 'stellsurfacegravity']
+
+complex_args = ['datafile']
+
+
+def Predict_Simple(x):
+    predTree = planet_predictor.predict([x])
+    return print(f"The number of planets that the system you entered has is: |{predTree[0]}| With 81% accuracy.")
 
 def Predict_Complex():
     #For the complex predict (Or to predict more than 1 Star Exoplanets) please replace the 'YOUR TESTSET' with the variable assigned for the prediction. Please note that for the variable the headers of your database must contain st_teff  st_rad  st_mass  st_met  st_age  st_dens  st_radv.
-    df_location = input('Please enter the path to your .csv dataframe (Include the ".csv"), please note that the headers of your dataframe must be: st_teff  st_rad  st_mass  st_met  st_age  st_dens  st_radv, gathering all the characteristics. (Read the README.md to see the description of each header): ')
-    dataframe = pd.read_csv(f'{df_location}')
-    var_df = dataframe[['st_teff', 'st_rad', 'st_mass', 'st_met', 'st_age', 'st_dens', 'st_radv']]
+    dataframe = pd.read_csv(f'{args.datafile}')
+    var_df = dataframe[['st_teff', 'st_rad', 'st_mass', 'st_met', 'st_age', 'st_dens', 'st_radv', 'st_logg']]
     clean_df = var_df.dropna()
-    prediction_df = clean_df[['st_teff', 'st_rad', 'st_mass', 'st_met', 'st_age', 'st_dens', 'st_radv']]
+    prediction_df = clean_df[['st_teff', 'st_rad', 'st_mass', 'st_met', 'st_age', 'st_dens', 'st_radv', 'st_logg']]
     #Predict
     predTree = planet_predictor.predict(prediction_df)
     outfile = open('predictions.txt', 'w')
-    outfile.write('This is the output for the prediction. The machine Learning Model has a 76 percent accuracy score. Rights Reserved Edward Gaibor. https://edwardgaibor.me' + '\n')
+    outfile.write('This is the output of the prediction. The machine Learning Model has a 81 percent accuracy score. The model is constantly being improved, stay up to date with our repository: https://github.com/gaiborjosue/ml_exoplanet_prediction  -  Rights Reserved Edward Gaibor. https://edwardgaibor.me' + '\n')
     for item in predTree:
         outfile.write(str(item) + '\n')
     outfile.close()
-    return print('The Predictions were saved to "predictions.txt" file. Each line of the TXT file corresponds to each star given by the dataset.')
+    return print('The Predictions were saved to "predictions.txt" file. Each line of the TXT file corresponds to each prediction. PD: The datafile was cleaned, which means that every NaN value was removed.')
 
-first_question = input('Do you want to predict the number of planets for a single star or for many stars(Dataframe)?(Single/Many) ')
-
-if first_question == 'Single':
-    Predict_Simple()
-    
-elif first_question == 'Many':
+if args.datafile:
     Predict_Complex()
+
+if args.datafile == None:
+    for arg in vars(args):
+        if arg in simple_args:
+            pred_args.append(int(getattr(args, arg)))
+    Predict_Simple(pred_args)
