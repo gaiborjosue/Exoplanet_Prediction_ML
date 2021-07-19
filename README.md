@@ -1,3 +1,4 @@
+![Capture](https://user-images.githubusercontent.com/78832141/126161425-0f24c163-972e-455a-b3f0-bd2325923492.PNG)
 # The Exoplanet Predictor
 The Exoplanet Predictor Version 1.0 - Predict the number of planets of a system based on the stellar characteristics. The usage of this tool is through the command line (CMD). 
 
