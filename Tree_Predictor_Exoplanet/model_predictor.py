@@ -68,10 +68,10 @@ complex_args = ['datafile']
 
 def Predict_Simple(x):
     predTree = planet_predictor.predict([x])
-    return print(f"The number of planets that the system you entered has is: |{predTree[0]}| With 81% accuracy.")
+    return print(f"The number of planets that the system you entered has is: |{predTree[0]}| With 92% accuracy.")
 
 def Predict_Complex():
-    #For the complex predict (Or to predict more than 1 Star Exoplanets) please replace the 'YOUR TESTSET' with the variable assigned for the prediction. Please note that for the variable the headers of your database must contain st_teff  st_rad  st_mass  st_met  st_age  st_dens  st_radv.
+    #For the complex predict (Or to predict more than 1 Star Exoplanets) please replace the 'YOUR TESTSET' with the variable assigned for the prediction. Please note that for the variable the headers of your database must contain st_teff  st_rad  st_mass  st_met  st_age  st_dens  st_radv st_logg.
     dataframe = pd.read_csv(f'{args.datafile}')
     var_df = dataframe[['st_teff', 'st_rad', 'st_mass', 'st_met', 'st_age', 'st_dens', 'st_radv', 'st_logg']]
     clean_df = var_df.dropna()
@@ -79,7 +79,7 @@ def Predict_Complex():
     #Predict
     predTree = planet_predictor.predict(prediction_df)
     outfile = open('predictions.txt', 'w')
-    outfile.write('This is the output of the prediction. The machine Learning Model has a 81 percent accuracy score. The model is constantly being improved, stay up to date with our repository: https://github.com/gaiborjosue/ml_exoplanet_prediction  -  Rights Reserved Edward Gaibor. https://edwardgaibor.me' + '\n')
+    outfile.write('This is the output of the prediction. The machine Learning Model has a 92 percent accuracy score. The model is constantly being improved, stay up to date with our repository: https://github.com/gaiborjosue/ml_exoplanet_prediction  -  Rights Reserved Edward Gaibor. https://edwardgaibor.me' + '\n')
     for item in predTree:
         outfile.write(str(item) + '\n')
     outfile.close()
@@ -91,5 +91,5 @@ if args.datafile:
 if args.datafile == None:
     for arg in vars(args):
         if arg in simple_args:
-            pred_args.append(int(getattr(args, arg)))
+            pred_args.append(float(getattr(args, arg)))
     Predict_Simple(pred_args)
