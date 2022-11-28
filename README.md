@@ -30,4 +30,4 @@ You can find the predictions.txt file in the current directory.
 ### References
 The database used to train the algorithm was produced by the NASA Exoplanet Archive  http://exoplanetarchive.ipac.caltech.edu
 
-### For an web-based experience please visit: https://github.com/leiDnedyA/interactive-exoplanet-predictor
+### For a web-based experience please visit: https://github.com/leiDnedyA/interactive-exoplanet-predictor
